@@ -838,10 +838,11 @@ def admin_users_delete(item_id):
     return redirect(url_for("admin_users"))
 
 
+
 # ----------------------------------------------------------------------
 if __name__ == "__main__":
     init_db()
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
 else:
-    # Ensure DB exists when imported by a WSGI server too.
     init_db()
