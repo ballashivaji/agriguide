@@ -1,0 +1,55 @@
+{% extends "base_app.html" %}
+{% block title %}Irrigation Guidance - AgriGuide{% endblock %}
+{% block content %}
+
+<div class="panel">
+  <h2>💧 Irrigation Guidance</h2>
+  <p class="sub">Get the right watering advice for your crop.</p>
+
+  <form method="POST">
+    <div class="form-grid">
+      <div>
+        <label>Select Crop</label>
+        <select name="crop_name" required>
+          {% for c in crop_names %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
+        </select>
+      </div>
+      <div>
+        <label>Soil Condition</label>
+        <select name="soil_condition" required>
+          <option value="Dry">Dry</option>
+          <option value="Normal">Normal</option>
+          <option value="Wet">Wet</option>
+        </select>
+      </div>
+      <div>
+        <label>Recent Rainfall</label>
+        <select name="rainfall" required>
+          <option value="No Rain">No Rain</option>
+          <option value="Moderate Rain">Moderate Rain</option>
+          <option value="Heavy Rain">Heavy Rain</option>
+        </select>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">Check Irrigation</button>
+  </form>
+</div>
+
+{% if result %}
+  <div class="result-box">
+    <h3>💧 {{ result }}</h3>
+    <p style="margin:0; color:var(--text-muted); font-size:14px;">
+      Your crop's watering advice is based on the soil condition and recent rainfall you selected.
+    </p>
+  </div>
+  {% if tips %}
+  <div class="info-tip-box">
+    <strong>Additional Tips</strong>
+    <ul>
+      {% for tip in tips %}<li>{{ tip }}</li>{% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+{% endif %}
+
+{% endblock %}

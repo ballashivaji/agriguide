@@ -1,0 +1,22 @@
+{% extends "base_app.html" %}
+{% block title %}Scan History - AgriGuide{% endblock %}
+{% block content %}
+<div class="panel">
+  <h2>🕘 Scan History</h2>
+  <p class="sub">Your previous leaf-photo scans.</p>
+  {% if rows %}
+  <table class="data-table">
+    <tr><th>Date</th><th>Crop</th><th>Result</th><th>Confidence</th><th>Status</th></tr>
+    {% for r in rows %}
+    <tr>
+      <td>{{ r.created_at[:16] }}</td><td>{{ r.crop or '-' }}</td><td>{{ r.result }}</td>
+      <td>{{ r.confidence }}%</td><td>{{ '✅ Healthy' if r.healthy else '⚠️ Problem' }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  <p style="margin-top:16px;"><a href="{{ url_for('history_clear') }}" class="btn btn-sm confirm-delete" style="background:#fbe3e6;color:#9b1c2c;">Clear history</a></p>
+  {% else %}
+  <p class="empty-state">No scans yet. Try the <a href="{{ url_for('disease') }}" style="color:var(--green-primary);font-weight:600;">photo disease detector</a>.</p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base_app.html" %}
+{% block title %}Admin Panel - AgriGuide{% endblock %}
+{% block content %}
+
+<h2 style="margin-top:0;">Admin Panel</h2>
+<p class="sub" style="margin-bottom:20px;">Manage all data and information</p>
+
+<div class="stat-grid">
+  <div class="stat-card"><div class="num">{{ counts.crops }}</div><div class="label">Crops</div></div>
+  <div class="stat-card"><div class="num">{{ counts.diseases }}</div><div class="label">Diseases</div></div>
+  <div class="stat-card"><div class="num">{{ counts.fertilizer }}</div><div class="label">Fertilizer Records</div></div>
+  <div class="stat-card"><div class="num">{{ counts.irrigation }}</div><div class="label">Irrigation Rules</div></div>
+  <div class="stat-card"><div class="num">{{ counts.users }}</div><div class="label">Users</div></div>
+</div>
+
+<div class="admin-action-grid">
+  <a href="{{ url_for('admin_crops') }}" class="admin-action">
+    <div class="feature-icon" style="background:#e6f6ea;">🌱</div>
+    Add / Manage Crop
+  </a>
+  <a href="{{ url_for('admin_soil') }}" class="admin-action">
+    <div class="feature-icon" style="background:#fdeee3;">🧭</div>
+    Add / Manage Soil
+  </a>
+  <a href="{{ url_for('admin_fertilizer') }}" class="admin-action">
+    <div class="feature-icon" style="background:#fdf3d8;">🧪</div>
+    Add Fertilizer
+  </a>
+  <a href="{{ url_for('admin_diseases') }}" class="admin-action">
+    <div class="feature-icon" style="background:#fbe3e6;">🐛</div>
+    Add Disease
+  </a>
+  <a href="{{ url_for('admin_users') }}" class="admin-action">
+    <div class="feature-icon" style="background:#e3edfb;">👥</div>
+    Manage Users
+  </a>
+</div>
+
+{% endblock %}

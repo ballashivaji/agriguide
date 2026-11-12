@@ -1,0 +1,33 @@
+{% extends "base_app.html" %}
+{% block title %}Manage Users - AgriGuide{% endblock %}
+{% block content %}
+
+<div class="panel">
+  <h2>👥 Manage Users</h2>
+  <p class="sub">All registered accounts ({{ rows|length }})</p>
+  {% if rows %}
+  <div style="overflow-x:auto;">
+    <table class="data-table">
+      <thead>
+        <tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>
+          <td>{{ row.id }}</td>
+          <td>{{ row.name }}</td>
+          <td>{{ row.email }}</td>
+          <td>{{ row.role }}</td>
+          <td>{{ row.created_at }}</td>
+          <td><a href="{{ url_for('admin_users_delete', item_id=row.id) }}" class="btn btn-danger btn-sm confirm-delete">Delete</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <p class="empty-state">No users yet.</p>
+  {% endif %}
+</div>
+
+{% endblock %}

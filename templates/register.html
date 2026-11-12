@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register - AgriGuide</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="auth-page">
+  <div class="auth-card">
+    <a href="{{ url_for('index') }}" class="brand">
+      <span class="brand-icon">🌱</span>
+      <span style="color:var(--green-dark);">AgriGuide<span class="brand-sub">Smart Agriculture Information System</span></span>
+    </a>
+    <h1>Register</h1>
+    <p class="sub">Create your account to get started</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-list" style="padding:0; max-width:none; margin-bottom:10px;">
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('register') }}">
+      <div class="form-group">
+        <label>Full Name</label>
+        <div class="input-wrap">
+          <span class="icon">👤</span>
+          <input type="text" name="name" placeholder="Full Name" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <div class="input-wrap">
+          <span class="icon">✉️</span>
+          <input type="email" name="email" placeholder="Email" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <div class="input-wrap">
+          <span class="icon">🔒</span>
+          <input type="password" name="password" placeholder="Password" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <div class="input-wrap">
+          <span class="icon">🔒</span>
+          <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Account Type</label>
+        <div class="input-wrap">
+          <span class="icon">🎭</span>
+          <select name="role">
+            <option value="Farmer">Farmer</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Register</button>
+    </form>
+
+    <p class="auth-footer">Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+  </div>
+</div>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

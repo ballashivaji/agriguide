@@ -1,0 +1,53 @@
+{% extends "base_app.html" %}
+{% block title %}Crop Recommendation - AgriGuide{% endblock %}
+{% block content %}
+
+<div class="panel">
+  <h2>🌱 Crop Recommendation</h2>
+  <p class="sub">Select the details below to get suitable crops.</p>
+
+  <form method="POST">
+    <div class="form-grid">
+      <div>
+        <label>Soil Type</label>
+        <select name="soil_type" required>
+          {% for s in soil_types %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+        </select>
+      </div>
+      <div>
+        <label>Season</label>
+        <select name="season" required>
+          {% for s in seasons %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+        </select>
+      </div>
+      <div>
+        <label>Water Availability</label>
+        <select name="water" required>
+          {% for w in water_levels %}<option value="{{ w }}">{{ w }}</option>{% endfor %}
+        </select>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">Get Recommendation</button>
+  </form>
+</div>
+
+{% if results is not none %}
+  <div class="result-box">
+    <h3>🌾 Recommended Crops</h3>
+    {% if results|length == 0 %}
+      <p class="empty-state">No exact match found. Try adjusting the soil, season, or water level.</p>
+    {% else %}
+      {% for crop in results %}
+        <div class="crop-result-item">
+          <div>
+            <div class="name">{{ crop.crop_name }}</div>
+            <div class="desc">{{ crop.notes }}</div>
+          </div>
+          <span class="check">✓</span>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+{% endif %}
+
+{% endblock %}

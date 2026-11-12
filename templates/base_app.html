@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}AgriGuide{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a href="{{ url_for('index') }}" class="brand">
+      <span class="brand-icon">🌱</span>
+      <span>AgriGuide</span>
+    </a>
+    <nav>
+      {% if current_user_role == 'Admin' %}
+        <a href="{{ url_for('admin') }}" class="{{ 'active' if request.endpoint == 'admin' }}">📊 Dashboard</a>
+        <a href="{{ url_for('admin_crops') }}" class="{{ 'active' if request.endpoint == 'admin_crops' }}">🌱 Manage Crops</a>
+        <a href="{{ url_for('admin_soil') }}" class="{{ 'active' if request.endpoint == 'admin_soil' }}">🧭 Manage Soil / Irrigation</a>
+        <a href="{{ url_for('admin_fertilizer') }}" class="{{ 'active' if request.endpoint == 'admin_fertilizer' }}">🧪 Manage Fertilizer</a>
+        <a href="{{ url_for('admin_diseases') }}" class="{{ 'active' if request.endpoint == 'admin_diseases' }}">🍃 Manage Diseases</a>
+        <a href="{{ url_for('admin_users') }}" class="{{ 'active' if request.endpoint == 'admin_users' }}">👥 Manage Users</a>
+      {% else %}
+        <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' }}">📊 Dashboard</a>
+        <a href="{{ url_for('crop') }}" class="{{ 'active' if request.endpoint == 'crop' }}">🌱 Crop Recommendation</a>
+        <a href="{{ url_for('irrigation') }}" class="{{ 'active' if request.endpoint == 'irrigation' }}">💧 Irrigation Guidance</a>
+        <a href="{{ url_for('fertilizer') }}" class="{{ 'active' if request.endpoint == 'fertilizer' }}">🧪 Fertilizer Information</a>
+        <a href="{{ url_for('disease') }}" class="{{ 'active' if request.endpoint == 'disease' }}">🍃 Plant Disease Information</a>
+        <a href="{{ url_for('weather') }}" class="{{ 'active' if request.endpoint == 'weather' }}">🌦️ Weather Information</a>
+        <a href="{{ url_for('history') }}" class="{{ 'active' if request.endpoint == 'history' }}">🕘 Scan History</a>
+        <a href="{{ url_for('profile') }}" class="{{ 'active' if request.endpoint == 'profile' }}">👤 Profile</a>
+      {% endif %}
+      <a href="{{ url_for('logout') }}">↩️ Logout</a>
+    </nav>
+  </aside>
+
+  <div class="main-area">
+    <div class="topbar">
+      <span class="avatar">{{ (current_user_name or "U")[0]|upper }}</span>
+      <span>Welcome, {{ current_user_name }}{% if current_user_role == 'Admin' %} (Admin){% endif %}</span>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-list" style="max-width:none;">
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="page-content">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+</div>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

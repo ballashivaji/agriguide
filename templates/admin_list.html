@@ -1,0 +1,47 @@
+{% extends "base_app.html" %}
+{% block title %}{{ title }} - AgriGuide{% endblock %}
+{% block content %}
+
+<div class="panel">
+  <h2>{{ title }}</h2>
+  <p class="sub">Add a new record below. It will appear instantly for all farmers using the app.</p>
+  <form method="POST" action="{{ url_for(add_endpoint) }}">
+    <div class="form-grid">
+      {% for field in fields %}
+        <div>
+          <label>{{ field.label }}</label>
+          <input type="text" name="{{ field.name }}" required>
+        </div>
+      {% endfor %}
+    </div>
+    <button type="submit" class="btn btn-primary">➕ Add Record</button>
+  </form>
+</div>
+
+<div class="panel">
+  <h2>Existing Records ({{ rows|length }})</h2>
+  {% if rows %}
+  <div style="overflow-x:auto;">
+    <table class="data-table">
+      <thead>
+        <tr>
+          {% for col in columns %}<th>{{ col.replace('_', ' ')|title }}</th>{% endfor %}
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>
+          {% for col in columns %}<td>{{ row[col] }}</td>{% endfor %}
+          <td><a href="{{ url_for(delete_endpoint, item_id=row['id']) }}" class="btn btn-danger btn-sm confirm-delete">Delete</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <p class="empty-state">No records yet. Add one above.</p>
+  {% endif %}
+</div>
+
+{% endblock %}

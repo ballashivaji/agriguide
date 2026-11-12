@@ -1,0 +1,55 @@
+{% extends "base_app.html" %}
+{% block title %}Weather Information - AgriGuide{% endblock %}
+{% block content %}
+
+<div class="panel">
+  <h2>🌦️ Live Weather &amp; Farm Advisory</h2>
+  <p class="sub">Real-time weather for your exact location, with farming advice based on the forecast.</p>
+  <div class="wx-toolbar">
+    <button class="btn btn-primary btn-sm" id="wxGps" type="button">📍 Use my location</button>
+    <div class="wx-search">
+      <input type="text" id="wxSearch" placeholder="Search village / town / city…" autocomplete="off">
+      <ul id="wxResults" class="wx-results" hidden></ul>
+    </div>
+    <button class="btn btn-sm wx-ghost" id="wxRefresh" type="button">⟳ Refresh</button>
+  </div>
+  <div id="wxSaved" class="wx-saved"></div>
+</div>
+
+<div id="wxStatus" class="panel wx-status">Detecting your location…</div>
+
+<div id="wxBody" hidden>
+  <div class="panel wx-hero">
+    <div>
+      <div class="wx-place" id="wxPlace"></div>
+      <div class="wx-now"><span id="wxIcon" class="wx-big-icon"></span><span class="weather-temp" id="wxTemp"></span></div>
+      <div id="wxLabel" class="wx-label"></div>
+      <div class="sub small" id="wxUpdated"></div>
+      <button class="btn btn-sm wx-ghost" id="wxSave" type="button" style="margin-top:8px;">⭐ Save this place</button>
+    </div>
+    <div class="wx-tiles" id="wxTiles"></div>
+  </div>
+
+  <div class="panel">
+    <h2>🌾 Farm Advisory</h2>
+    <p class="sub">Based on the next 48 hours of forecast. Indicative only - confirm with your local agriculture officer.</p>
+    <div class="adv-grid" id="wxAdvisories"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Next 24 Hours</h2>
+    <div class="wx-chart-wrap"><div id="wxChart"></div></div>
+    <div class="wx-hours" id="wxHours"></div>
+  </div>
+
+  <div class="panel">
+    <h2>7-Day Forecast</h2>
+    <div class="forecast-grid wx-days" id="wxDays"></div>
+    <div class="wx-summary" id="wxSummary"></div>
+  </div>
+
+  <p class="sub small">Weather data: Open-Meteo.com. Soil and evapotranspiration values are model estimates, not field measurements.</p>
+</div>
+
+<script src="{{ url_for('static', filename='js/weather.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base_app.html" %}
+{% block title %}Fertilizer Information - AgriGuide{% endblock %}
+{% block content %}
+
+<div class="panel">
+  <h2>🧪 Fertilizer Information</h2>
+  <p class="sub">Get the right nutrients for better crop growth.</p>
+
+  <form method="POST">
+    <div class="form-grid">
+      <div>
+        <label>Select Crop</label>
+        <select name="crop_name" required>
+          {% for c in crop_names %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
+        </select>
+      </div>
+      <div>
+        <label>Soil Type</label>
+        <select name="soil_type" required>
+          {% for s in soil_types %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+        </select>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">Get Information</button>
+  </form>
+</div>
+
+{% if result %}
+  <div class="result-box">
+    <h3>🧪 Recommended Fertilizer</h3>
+    <div class="crop-result-item"><span class="name">Nitrogen (N)</span><span>{{ result.nitrogen }}</span></div>
+    <div class="crop-result-item"><span class="name">Phosphorus (P)</span><span>{{ result.phosphorus }}</span></div>
+    <div class="crop-result-item"><span class="name">Potassium (K)</span><span>{{ result.potassium }}</span></div>
+  </div>
+  {% if notes %}
+  <div class="info-tip-box">
+    <strong>Notes</strong>
+    <ul>
+      {% for note in notes %}<li>{{ note }}</li>{% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+{% elif searched %}
+  <div class="result-box"><p class="empty-state">No fertilizer data found for that combination yet.</p></div>
+{% endif %}
+
+{% endblock %}

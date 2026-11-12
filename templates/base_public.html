@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}AgriGuide{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="{{ url_for('index') }}" class="brand">
+      <span class="brand-icon">🌱</span>
+      <span>AgriGuide<span class="brand-sub">Smart Agriculture Information System</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="{{ url_for('index') }}" class="{{ 'active' if request.endpoint == 'index' }}">Home</a>
+      <a href="{{ url_for('crop') }}">Crop Recommendation</a>
+      <a href="{{ url_for('irrigation') }}">Irrigation</a>
+      <a href="{{ url_for('disease') }}">Diseases</a>
+      <a href="{{ url_for('fertilizer') }}">Fertilizer</a>
+      <a href="{{ url_for('weather') }}">Weather</a>
+    </div>
+    <div class="nav-actions">
+      {% if logged_in %}
+        <a href="{{ url_for('dashboard') if current_user_role != 'Admin' else url_for('admin') }}" class="btn btn-outline btn-sm">Dashboard</a>
+        <a href="{{ url_for('logout') }}" class="btn btn-primary btn-sm">Logout</a>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="btn btn-outline btn-sm">Login</a>
+        <a href="{{ url_for('register') }}" class="btn btn-primary btn-sm">Register</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-list">
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+
+  <footer class="footer">
+    AgriGuide &nbsp;|&nbsp; Smart Agriculture Information System &nbsp;&bull;&nbsp; Grow More · Farm Better · Together
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+Flask==3.0.3
+Werkzeug==3.0.3
+requests
+numpy
+Pillow
+scipy
+scikit-image
+scikit-learn
+joblib
+# --- AI disease model (pre-trained, downloaded automatically on first scan) ---
+transformers
+torch

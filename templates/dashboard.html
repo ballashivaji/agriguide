@@ -1,0 +1,61 @@
+{% extends "base_app.html" %}
+{% block title %}Dashboard - AgriGuide{% endblock %}
+{% block content %}
+
+<div class="welcome-banner">
+  <h2>Welcome to AgriGuide</h2>
+  <p>Your one-stop solution for smart agriculture</p>
+</div>
+
+<div class="card-grid" style="margin-bottom:22px;">
+  <div class="info-card">
+    <h3>🌦️ Weather right now</h3>
+    <div id="miniWeather"><p class="sub">Loading weather…</p></div>
+  </div>
+  <div class="info-card">
+    <h3>🕘 Recent leaf scans</h3>
+    {% if recent %}
+      <ul class="recent-list">{% for r in recent %}<li>{{ '✅' if r.healthy else '⚠️' }} {{ r.result }} <span class="sub small">({{ r.confidence }}%)</span></li>{% endfor %}</ul>
+      <a href="{{ url_for('history') }}" class="btn btn-sm btn-primary" style="margin-top:10px;">View history</a>
+    {% else %}
+      <p class="sub">No scans yet. Upload a leaf photo to check for disease.</p>
+      <a href="{{ url_for('disease') }}" class="btn btn-sm btn-primary">Scan a leaf</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card-grid">
+  <div class="info-card">
+    <div class="feature-icon" style="background:#e6f6ea;">🌱</div>
+    <h3>Crop Recommendation</h3>
+    <p>Get the best crops based on your soil and season.</p>
+    <a href="{{ url_for('crop') }}" class="btn btn-primary btn-sm">View</a>
+  </div>
+  <div class="info-card">
+    <div class="feature-icon" style="background:#e3f0fc;">💧</div>
+    <h3>Irrigation Guidance</h3>
+    <p>Know when and how much to water.</p>
+    <a href="{{ url_for('irrigation') }}" class="btn btn-primary btn-sm">View</a>
+  </div>
+  <div class="info-card">
+    <div class="feature-icon" style="background:#fdf3d8;">🧪</div>
+    <h3>Fertilizer Information</h3>
+    <p>Get the right nutrients for better growth.</p>
+    <a href="{{ url_for('fertilizer') }}" class="btn btn-primary btn-sm">View</a>
+  </div>
+  <div class="info-card">
+    <div class="feature-icon" style="background:#fbe3e6;">🍃</div>
+    <h3>Plant Disease Information</h3>
+    <p>Identify and prevent plant diseases.</p>
+    <a href="{{ url_for('disease') }}" class="btn btn-primary btn-sm">View</a>
+  </div>
+  <div class="info-card">
+    <div class="feature-icon" style="background:#e3edfb;">🌦️</div>
+    <h3>Weather Information</h3>
+    <p>Check current weather and forecast.</p>
+    <a href="{{ url_for('weather') }}" class="btn btn-primary btn-sm">View</a>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/weather.js') }}"></script>
+{% endblock %}

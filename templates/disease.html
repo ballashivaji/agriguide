@@ -1,0 +1,140 @@
+{% extends "base_app.html" %}
+{% block title %}Plant Disease Information - AgriGuide{% endblock %}
+{% block content %}
+
+<div class="panel">
+  <h2>📷 Detect Disease from Photo</h2>
+  <p class="sub">Upload a close, well-lit photo of <strong>one leaf</strong> (plain background works best). The AI first checks that the image really is a leaf, then predicts the disease.</p>
+  <form method="POST" enctype="multipart/form-data" id="photoForm">
+    <input type="hidden" name="mode" value="photo">
+    <div class="form-grid">
+      <div>
+        <label>Leaf Photo</label>
+        <input type="file" name="leaf_photo" id="leafPhoto" accept="image/*" required>
+      </div>
+      <div>
+        <label>Crop (recommended - improves accuracy)</label>
+        <select name="photo_crop">
+          <option value="">Not sure / any</option>
+          {% for c in photo_crops %}<option value="{{ c }}" {{ 'selected' if photo and photo.crop == c }}>{{ c }}</option>{% endfor %}
+        </select>
+      </div>
+    </div>
+    <img id="liveThumb" class="photo-preview live-thumb" alt="" hidden>
+    <button type="submit" class="btn btn-primary btn-block" id="analyzeBtn">Analyze Photo</button>
+  </form>
+  <p class="sub" style="margin:12px 0 0;font-size:12.5px;">Photo model covers: {{ supported_crops|join(', ') }}. For other crops use the symptom checker below.</p>
+</div>
+
+{% if photo %}
+<div class="panel photo-result">
+  <div class="photo-grid">
+    <img src="{{ photo.preview }}" alt="Uploaded photo" class="photo-preview">
+    <div>
+    {% if photo.error %}
+      <div class="alert-box alert-{{ 'warn' if photo.status in ('uncertain','crop_mismatch','unsupported_crop') else 'bad' }}">
+        <strong>{{ {'not_leaf':'🚫 Not a plant leaf','uncertain':'🤔 Not sure','crop_mismatch':'⚠️ Crop mismatch','unsupported_crop':'ℹ️ Crop not covered','error':'⚠️ Could not read image'}[photo.status] }}</strong>
+        <p>{{ photo.error }}</p>
+      </div>
+      {% if photo.pred.top %}
+        <p class="sub">Closest guesses (low reliability): {% for t in photo.pred.top %}{{ t.display }} ({{ t.percent }}%){% if not loop.last %}, {% endif %}{% endfor %}</p>
+      {% endif %}
+    {% else %}
+      {% if photo.healthy %}<h3>✅ {{ photo.display }}</h3>{% else %}<h3>🔎 {{ photo.display }}</h3>{% endif %}
+      <div class="conf-bar"><div class="conf-fill {{ 'hi' if photo.pred.confidence >= 75 else 'mid' }}" style="width: {{ photo.pred.confidence }}%"></div></div>
+      <p>Confidence: <strong>{{ photo.pred.confidence }}%</strong>
+         <span class="sub">({{ {'pretrained':'pre-trained AI model','trained':'your trained model','quick-scan':'basic colour scan'}[photo.pred.mode] }}{% if photo.pred.model %}: {{ photo.pred.model.split('/')[-1] }}{% endif %})</span></p>
+      {% if photo.pred.message %}<p class="sub">{{ photo.pred.message }}</p>{% endif %}
+      {% if photo.pred.top|length > 1 %}
+        <p class="sub">Other possibilities: {% for t in photo.pred.top[1:] %}{{ t.display }} ({{ t.percent }}%){% if not loop.last %}, {% endif %}{% endfor %}</p>
+      {% endif %}
+      {% if photo.pred.checks %}
+        <p class="sub small">Image check: {{ photo.pred.checks.leaf_check or 'colour' }}{% if photo.pred.checks.leaf_score is defined %} · leaf score {{ photo.pred.checks.leaf_score }}%{% endif %}{% if photo.pred.checks.agreement %} · ✅ {{ photo.pred.checks.agreement }}{% endif %}</p>
+      {% endif %}
+    {% endif %}
+    </div>
+  </div>
+
+  {% if photo.info and not photo.error %}
+  <div class="disease-box" style="margin-top:20px;">
+    <div class="disease-header">
+      <h3>🍃 {{ photo.info.name }}</h3>
+      <span>{{ photo.info.type }}{% if photo.info.source %} · {{ photo.info.source }}{% endif %}</span>
+    </div>
+    <div class="disease-body">
+      <div>
+        {% if photo.info.symptoms %}<h4>Symptoms</h4><ul>{% for x in photo.info.symptoms %}<li>{{ x }}</li>{% endfor %}</ul>{% endif %}
+        {% if photo.info.causes %}<h4 style="margin-top:14px;">Possible Causes</h4><ul>{% for x in photo.info.causes %}<li>{{ x }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+      <div>
+        {% if photo.info.treatment %}<h4>What to do now</h4><ul>{% for x in photo.info.treatment %}<li>{{ x }}</li>{% endfor %}</ul>{% endif %}
+        {% if photo.info.prevention %}<h4 style="margin-top:14px;">Prevention Tips</h4><ul>{% for x in photo.info.prevention %}<li>{{ x }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+    </div>
+  </div>
+  <p class="sub small" style="margin-top:12px;">AI predictions can be wrong, especially with field photos. Always confirm serious outbreaks with your local agriculture officer / KVK before spraying. Check pesticide labels for dose and safety.</p>
+  {% endif %}
+</div>
+{% endif %}
+
+<div class="panel">
+  <h2>🍃 Plant Disease Information</h2>
+  <p class="sub">Identify plant diseases and get prevention tips.</p>
+
+  <form method="POST">
+    <div class="form-grid">
+      <div>
+        <label>Select Crop</label>
+        <select name="crop_name" required>
+          {% for c in crop_names %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
+        </select>
+      </div>
+      <div>
+        <label>Select Symptom</label>
+        <select name="symptom" required>
+          {% for s in symptoms %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+        </select>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">Check Disease</button>
+  </form>
+</div>
+
+{% if result %}
+  <div class="disease-box">
+    <div class="disease-header">
+      <h3>🍃 {{ result.disease_name }}</h3>
+      <span>{{ result.disease_type }}</span>
+    </div>
+    <div class="disease-body">
+      <div>
+        <h4>Possible Causes</h4>
+        <ul>{% for c in causes %}<li>{{ c }}</li>{% endfor %}</ul>
+      </div>
+      <div>
+        <h4>Symptoms</h4>
+        <ul><li>{{ result.symptom }}</li></ul>
+        <h4 style="margin-top:14px;">Prevention Tips</h4>
+        <ul>{% for p in prevention %}<li>{{ p }}</li>{% endfor %}</ul>
+      </div>
+    </div>
+  </div>
+{% elif searched %}
+  <div class="result-box"><p class="empty-state">No matching disease record found for that crop/symptom combination yet.</p></div>
+{% endif %}
+
+<script>
+(function () {
+  const input = document.getElementById("leafPhoto"), thumb = document.getElementById("liveThumb");
+  input.addEventListener("change", () => {
+    const f = input.files[0];
+    if (!f) { thumb.hidden = true; return; }
+    thumb.src = URL.createObjectURL(f); thumb.hidden = false;
+  });
+  document.getElementById("photoForm").addEventListener("submit", () => {
+    const b = document.getElementById("analyzeBtn");
+    b.disabled = true; b.textContent = "Analyzing… (first scan can take a minute while the AI loads)";
+  });
+})();
+</script>
+{% endblock %}
